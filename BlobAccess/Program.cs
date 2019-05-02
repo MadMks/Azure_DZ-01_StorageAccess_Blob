@@ -27,15 +27,15 @@ namespace BlobAccess
             Console.WriteLine("====\n\n\n");
 
 
-            TestDownload(container);
+            DownloadFilesAndAllFolders(container);
 
             Console.WriteLine("\n\n\n>>> Succeed");
             Console.ReadKey();
         }
 
-        private static async Task TestDownload(CloudBlobContainer container)
+        private static async Task DownloadFilesAndAllFolders(CloudBlobContainer container)
         {
-            Console.WriteLine("[---] container.Uri.AbsolutePath: " 
+            Console.WriteLine("[---] container.Uri.AbsolutePath: "
                 + container.Uri.AbsolutePath + "\n\n");
 
             int containerPathLength = container.Uri.AbsolutePath.Length;
@@ -62,6 +62,9 @@ namespace BlobAccess
             }
         }
 
+        /// <summary>
+        /// Создание требуемых папок встречающихся в имени Blob.
+        /// </summary>
         private static void CreateAllFolder(string blobName)
         {
             string[] folders = blobName.Split('/');
