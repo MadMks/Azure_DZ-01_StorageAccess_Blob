@@ -29,6 +29,9 @@ namespace BlobAccess
 
             DownloadFilesAndAllFolders(container);
 
+            Console.WriteLine("\n\nUri: " + GetBlobSasUri(container));
+
+
             Console.WriteLine("\n\n\n>>> Succeed");
             Console.ReadKey();
         }
@@ -78,6 +81,37 @@ namespace BlobAccess
                     Directory.CreateDirectory(path);
                 }
             }
+        }
+
+        static string GetBlobSasUri(CloudBlobContainer container)
+        {
+            // Получить ссылку на BLOB-объект внутри контейнера.
+            CloudBlockBlob blob = container.GetBlockBlobReference("sasblob.txt");
+
+            // Загрузить текст в BLOB-объект. Если блоб еще не существует,
+            // он будет создан.
+            // Если большой двоичный объект существует, 
+            // его существующее содержимое будет перезаписано.
+            string blobContent = "This blob will be accessible " +
+                "to clients via a shared access signature (SAS).";
+            blob.UploadText(blobContent);
+
+            // Установка времени истечения и разрешения для BLOB - объекта.
+            // В этом случае время запуска задается как несколько минут в прошлом, 
+            // чтобы уменьшить перекос часов.
+            // Подпись общего доступа будет действительной немедленно.
+            SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy();
+            sasConstraints.SharedAccessStartTime = DateTimeOffset.UtcNow.AddMinutes(-5);
+            sasConstraints.SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddHours(24);
+            sasConstraints.Permissions = 
+                SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.Write;
+
+            // Создание подписи общего доступа на BLOB-объекте,
+            // установив ограничения непосредственно на подпись.
+            string sasBlobToken = blob.GetSharedAccessSignature(sasConstraints);
+
+            // Возвращает строку URI для контейнера, включая токен SAS.
+            return blob.Uri + sasBlobToken;
         }
 
     }
