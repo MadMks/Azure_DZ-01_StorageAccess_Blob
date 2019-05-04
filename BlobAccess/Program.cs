@@ -102,7 +102,7 @@ namespace BlobAccess
             // Подпись общего доступа будет действительной немедленно.
             SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy();
             sasConstraints.SharedAccessStartTime = DateTimeOffset.Now.AddMinutes(-5);
-            sasConstraints.SharedAccessExpiryTime = DateTimeOffset.Now.AddHours(2);
+            sasConstraints.SharedAccessExpiryTime = DateTimeOffset.Now.AddHours(24 * 7);
             sasConstraints.Permissions = 
                 SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.List;
 
