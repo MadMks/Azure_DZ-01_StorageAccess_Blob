@@ -22,37 +22,39 @@ namespace BlobAccess
             // Получаем CloudBlobContainer
             CloudBlobContainer container = blobClient.GetContainerReference("container1");
 
-            Console.WriteLine(container.Name);
-            Console.WriteLine(container.Uri.AbsolutePath);
+            Console.WriteLine(" Container Name: " + container.Name);
+            Console.WriteLine(" Container AbsolutePath: " 
+                + container.Uri.AbsolutePath);
             Console.WriteLine("====\n\n\n");
 
 
-            DownloadFilesAndAllFolders(container);
+            //DownloadFilesAndAllFolders(container);
 
-            Console.WriteLine("\n\nUri: " + GetBlobSasUri(container));
+            Task taskDownload = Task.Run(() => DownloadFilesAndAllFolders(container));
+
+            taskDownload.Wait();
+
+            Console.WriteLine("Uri: " + GetBlobSasUri(container));
 
 
-            Console.WriteLine("\n\n\n>>> Succeed");
+            //Console.WriteLine("\n\n\n>>> Succeed");
             Console.ReadKey();
         }
 
         private static async Task DownloadFilesAndAllFolders(CloudBlobContainer container)
         {
-            Console.WriteLine("[---] container.Uri.AbsolutePath: "
-                + container.Uri.AbsolutePath + "\n\n");
-
             int containerPathLength = container.Uri.AbsolutePath.Length;
 
             foreach (IListBlobItem blob in container.ListBlobs("", true))
             {
-                Console.WriteLine("[---] Полный путь файла: " + blob.Uri.AbsolutePath);
+                Console.WriteLine("\n[---] Полный путь файла: " + blob.Uri.AbsolutePath);
 
 
                 string blobName
                     = blob.Uri.AbsolutePath.Substring(
                         containerPathLength + 1);
 
-                Console.WriteLine("blobName = " + blobName);
+                Console.WriteLine("> blobName = " + blobName);
                 // Получение ссылки.
                 var reference = container.GetBlobReferenceFromServer(
                     blobName);
@@ -63,6 +65,8 @@ namespace BlobAccess
                 // Скачивание Blob.
                 await reference.DownloadToFileAsync(blobName, FileMode.Create);
             }
+
+            Console.WriteLine("\n\n\n>>> Download blob succeed\n\n\n");
         }
 
         /// <summary>
@@ -77,7 +81,7 @@ namespace BlobAccess
                 for (int i = 0; i < folders.Length - 1; i++)
                 {
                     path += folders[i] + "/";
-                    Console.WriteLine("path = " + path);
+                    Console.WriteLine("> Create folder: " + path);
                     Directory.CreateDirectory(path);
                 }
             }
