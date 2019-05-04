@@ -27,8 +27,7 @@ namespace BlobAccess
                 + container.Uri.AbsolutePath);
             Console.WriteLine("====\n\n\n");
 
-
-            //DownloadFilesAndAllFolders(container);
+            
 
             Task taskDownload = Task.Run(() => DownloadFilesAndAllFolders(container));
 
@@ -36,8 +35,7 @@ namespace BlobAccess
 
             Console.WriteLine("Uri: " + GetBlobSasUri(container));
 
-
-            //Console.WriteLine("\n\n\n>>> Succeed");
+            
             Console.ReadKey();
         }
 
